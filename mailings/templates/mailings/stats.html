@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика{% endblock %}
+
+{% block content %}
+  <h1 class="h3 mb-3">Статистика моих рассылок</h1>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3"><div class="card stat-card h-100"><div class="card-body">
+      <div class="text-muted">Рассылок</div><div class="display-6">{{ mailings_total }}</div>
+    </div></div></div>
+    <div class="col-6 col-lg-3"><div class="card stat-card h-100"><div class="card-body">
+      <div class="text-muted">Отправлено сообщений</div><div class="display-6">{{ messages_sent }}</div>
+    </div></div></div>
+    <div class="col-6 col-lg-3"><div class="card stat-card h-100"><div class="card-body">
+      <div class="text-muted">Успешных попыток</div><div class="display-6 text-success">{{ attempts_success }}</div>
+    </div></div></div>
+    <div class="col-6 col-lg-3"><div class="card stat-card h-100"><div class="card-body">
+      <div class="text-muted">Неуспешных попыток</div><div class="display-6 text-danger">{{ attempts_failure }}</div>
+    </div></div></div>
+  </div>
+
+  {% if mailings %}
+    <div class="table-responsive bg-white border rounded">
+      <table class="table mb-0">
+        <thead><tr><th>№</th><th>Сообщение</th><th>Статус</th><th>Успешно</th><th>Не успешно</th></tr></thead>
+        <tbody>
+          {% for mailing in mailings %}
+            <tr>
+              <td>{{ mailing.pk }}</td>
+              <td><a href="{% url 'mailings:mailing_detail' pk=mailing.pk %}">{{ mailing.message.subject }}</a></td>
+              <td>{% include "mailings/includes/status_badge.html" %}</td>
+              <td class="text-success">{{ mailing.success_count }}</td>
+              <td class="text-danger">{{ mailing.failure_count }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">У вас пока нет рассылок.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% with url_name=request.resolver_match.url_name %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand fw-semibold" href="{% url 'mailings:home' %}">📨 EMS</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-controls="mainNav" aria-expanded="false" aria-label="Меню">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link {% if url_name == 'home' %}active{% endif %}" href="{% url 'mailings:home' %}">Главная</a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link {% if 'recipient' in url_name %}active{% endif %}" href="{% url 'mailings:recipient_list' %}">Клиенты</a></li>
+          <li class="nav-item"><a class="nav-link {% if 'message' in url_name %}active{% endif %}" href="{% url 'mailings:message_list' %}">Сообщения</a></li>
+          <li class="nav-item"><a class="nav-link {% if 'mailing' in url_name %}active{% endif %}" href="{% url 'mailings:mailing_list' %}">Рассылки</a></li>
+          <li class="nav-item"><a class="nav-link {% if url_name == 'stats' %}active{% endif %}" href="{% url 'mailings:stats' %}">Статистика</a></li>
+          {% if perms.users.can_view_users %}
+            <li class="nav-item"><a class="nav-link {% if url_name == 'user_list' %}active{% endif %}" href="{% url 'users:user_list' %}">Пользователи</a></li>
+          {% endif %}
+        {% endif %}
+      </ul>
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ user.email }}{% if user.is_manager %} <span class="badge text-bg-info">менеджер</span>{% endif %}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'users:profile' %}">Профиль</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="post" action="{% url 'users:logout' %}" class="m-0">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item">Выйти</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Войти</a></li>
+          <li class="nav-item"><a class="btn btn-primary btn-sm ms-lg-2 mt-1" href="{% url 'users:register' %}">Регистрация</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endwith %}

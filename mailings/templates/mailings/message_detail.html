@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mail_message.subject }}{% endblock %}
+
+{% block content %}
+  <a href="{% url 'mailings:message_list' %}" class="btn btn-link ps-0 mb-2">&laquo; Все сообщения</a>
+  <div class="card">
+    <div class="card-body">
+      <h1 class="h3">{{ mail_message.subject }}</h1>
+      <p class="text-muted small">Владелец: {{ mail_message.owner.email }}</p>
+      <div class="border rounded p-3 bg-light mb-3">{{ mail_message.body|linebreaksbr }}</div>
+      {% if mail_message.owner_id == user.pk %}
+        <a href="{% url 'mailings:message_update' pk=mail_message.pk %}" class="btn btn-outline-primary">Редактировать</a>
+        <a href="{% url 'mailings:message_delete' pk=mail_message.pk %}" class="btn btn-outline-danger">Удалить</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

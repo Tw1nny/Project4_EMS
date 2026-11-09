@@ -1,0 +1,4 @@
+{% if not mailing.is_active %}<span class="badge text-bg-secondary">Отключена</span>{% endif %}
+{% if mailing.status == "Запущена" %}<span class="badge text-bg-success">Запущена</span>
+{% elif mailing.status == "Завершена" %}<span class="badge text-bg-dark">Завершена</span>
+{% else %}<span class="badge text-bg-primary">Создана</span>{% endif %}

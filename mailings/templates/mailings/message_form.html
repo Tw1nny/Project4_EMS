@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Редактирование сообщения{% else %}Новое сообщение{% endif %}{% endblock %}
+
+{% block content %}
+  <h1 class="h3 mb-3">{% if object %}Редактирование сообщения{% else %}Новое сообщение{% endif %}</h1>
+  <div class="row"><div class="col-lg-8">
+    <form method="post" novalidate class="card card-body">
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% if object %}{% url 'mailings:message_detail' pk=object.pk %}{% else %}{% url 'mailings:message_list' %}{% endif %}" class="btn btn-outline-secondary">Отмена</a>
+      </div>
+    </form>
+  </div></div>
+{% endblock %}

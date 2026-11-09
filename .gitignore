@@ -1,0 +1,23 @@
+# IDE и виртуальные окружения
+.idea/
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Django
+*.sqlite3
+staticfiles/
+media/
+*.log
+
+# Секреты — в репозиторий попадает только .env.example
+.env
+
+# Системные файлы ОС
+.DS_Store
+Thumbs.db
+desktop.ini

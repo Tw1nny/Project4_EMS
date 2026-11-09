@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}{{ delete_title }}{% endblock %}
+
+{% block content %}
+  <h1 class="h3 mb-3">{{ delete_title }}</h1>
+  <div class="card">
+    <div class="card-body">
+      <p class="mb-4">Удалить «{{ object }}»? Это действие нельзя отменить.</p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Да, удалить</button>
+        <a href="{{ cancel_url }}" class="btn btn-outline-secondary">Отмена</a>
+      </form>
+    </div>
+  </div>
+{% endblock %}

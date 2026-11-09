@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+  <div class="p-4 p-md-5 mb-4 bg-white rounded-3 border">
+    <h1 class="display-6 fw-semibold">Сервис управления рассылками</h1>
+    <p class="lead text-muted mb-4">Клиенты, сообщения и рассылки в одном месте — с отправкой по требованию и статистикой.</p>
+    {% if user.is_authenticated %}
+      <a href="{% url 'mailings:mailing_create' %}" class="btn btn-primary">Создать рассылку</a>
+      <a href="{% url 'mailings:stats' %}" class="btn btn-outline-secondary">Моя статистика</a>
+    {% else %}
+      <a href="{% url 'users:register' %}" class="btn btn-primary">Зарегистрироваться</a>
+      <a href="{% url 'users:login' %}" class="btn btn-outline-secondary">Войти</a>
+    {% endif %}
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card stat-card h-100"><div class="card-body">
+        <div class="text-muted">Всего рассылок</div>
+        <div class="display-6">{{ mailings_total }}</div>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card h-100"><div class="card-body">
+        <div class="text-muted">Активных рассылок</div>
+        <div class="display-6 text-success">{{ mailings_active }}</div>
+        <div class="small text-muted">сейчас в периоде отправки, статус «Запущена»</div>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card h-100"><div class="card-body">
+        <div class="text-muted">Уникальных получателей</div>
+        <div class="display-6">{{ recipients_unique }}</div>
+      </div></div>
+    </div>
+  </div>
+{% endblock %}

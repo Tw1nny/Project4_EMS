@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Рассылки{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Рассылки{% if perms.mailings.can_view_all_mailings %} <span class="text-muted fs-6">(все пользователи)</span>{% endif %}</h1>
+    <a href="{% url 'mailings:mailing_create' %}" class="btn btn-primary">+ Новая рассылка</a>
+  </div>
+  {% if mailings %}
+    <div class="table-responsive bg-white border rounded">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>№</th><th>Сообщение</th><th>Период отправки</th><th>Получателей</th><th>Статус</th>
+            {% if perms.mailings.can_view_all_mailings %}<th>Владелец</th>{% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for mailing in mailings %}
+            <tr>
+              <td>{{ mailing.pk }}</td>
+              <td><a href="{% url 'mailings:mailing_detail' pk=mailing.pk %}">{{ mailing.message.subject }}</a></td>
+              <td class="small">{{ mailing.start_time|date:"d.m.Y H:i" }} — {{ mailing.end_time|date:"d.m.Y H:i" }}</td>
+              <td>{{ mailing.recipients_count }}</td>
+              <td>{% include "mailings/includes/status_badge.html" %}</td>
+              {% if perms.mailings.can_view_all_mailings %}<td class="text-muted small">{{ mailing.owner.email }}</td>{% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">Рассылок пока нет.</p>
+  {% endif %}
+{% endblock %}

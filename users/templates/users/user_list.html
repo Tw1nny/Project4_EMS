@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Пользователи{% endblock %}
+
+{% block content %}
+  <h1 class="h3 mb-3">Пользователи сервиса</h1>
+  <div class="table-responsive bg-white border rounded">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Email</th><th>Имя</th><th>Роль</th><th>Статус</th><th></th></tr></thead>
+      <tbody>
+        {% for item in users_list %}
+          <tr>
+            <td>{{ item.email }}</td>
+            <td>{{ item.get_full_name|default:"—" }}</td>
+            <td>
+              {% if item.is_superuser %}Администратор
+              {% else %}{% for group in item.groups.all %}{{ group.name }}{% if not forloop.last %}, {% endif %}{% empty %}Пользователь{% endfor %}{% endif %}
+            </td>
+            <td>
+              {% if not item.email_verified %}<span class="badge text-bg-warning">Email не подтверждён</span>
+              {% elif item.is_active %}<span class="badge text-bg-success">Активен</span>
+              {% else %}<span class="badge text-bg-danger">Заблокирован</span>{% endif %}
+            </td>
+            <td class="text-end">
+              {% if perms.users.can_block_users and item != user and not item.is_superuser and item.email_verified %}
+                <form method="post" action="{% url 'users:user_block' pk=item.pk %}" class="m-0">
+                  {% csrf_token %}
+                  {% if item.is_active %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Заблокировать</button>
+                  {% else %}
+                    <button type="submit" class="btn btn-sm btn-outline-success">Разблокировать</button>
+                  {% endif %}
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

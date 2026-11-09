@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Нет доступа{% endblock %}
+
+{% block content %}
+  <h1 class="h3 mb-3">Нет доступа</h1>
+  <p class="text-muted">{% if exception %}{{ exception }}{% else %}У вас недостаточно прав для этого действия.{% endif %}</p>
+  <a href="{% url 'mailings:home' %}" class="btn btn-primary">На главную</a>
+{% endblock %}

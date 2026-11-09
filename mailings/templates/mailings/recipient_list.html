@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Клиенты{% if perms.mailings.can_view_all_recipients %} <span class="text-muted fs-6">(все пользователи)</span>{% endif %}</h1>
+    <a href="{% url 'mailings:recipient_create' %}" class="btn btn-primary">+ Добавить клиента</a>
+  </div>
+  {% if recipients %}
+    <div class="table-responsive bg-white border rounded">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>Ф. И. О.</th><th>Email</th>{% if perms.mailings.can_view_all_recipients %}<th>Владелец</th>{% endif %}</tr></thead>
+        <tbody>
+          {% for recipient in recipients %}
+            <tr>
+              <td><a href="{% url 'mailings:recipient_detail' pk=recipient.pk %}">{{ recipient.full_name }}</a></td>
+              <td>{{ recipient.email }}</td>
+              {% if perms.mailings.can_view_all_recipients %}<td class="text-muted">{{ recipient.owner.email }}</td>{% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">Клиентов пока нет.</p>
+  {% endif %}
+{% endblock %}

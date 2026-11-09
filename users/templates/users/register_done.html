@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Проверьте почту{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center"><div class="col-md-8 col-lg-6">
+    <div class="card"><div class="card-body">
+      <h1 class="h4">Проверьте почту</h1>
+      <p>Мы отправили письмо на <strong>{{ email }}</strong>. Перейдите по ссылке из письма, чтобы подтвердить email и войти в сервис.</p>
+      <p class="text-muted small mb-0">Ссылка действует 3 дня. Если письма нет, проверьте папку «Спам».</p>
+    </div></div>
+  </div></div>
+{% endblock %}

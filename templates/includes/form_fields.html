@@ -1,0 +1,44 @@
+{% comment %}
+Общий вывод полей формы: ошибки формы, подписи, подсказки, ошибки полей.
+Список чекбоксов (получатели рассылки) выводится отдельными чекбоксами.
+{% endcomment %}
+{% if form.non_field_errors %}
+  <div class="alert alert-danger">
+    {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+  </div>
+{% endif %}
+
+{% for field in form %}
+  <div class="mb-3">
+    {% if field.widget_type == "checkbox" %}
+      <div class="form-check">
+        {{ field }}
+        <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      </div>
+    {% else %}
+      <label class="form-label" for="{{ field.id_for_label }}">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+      {% if field.widget_type == "checkboxselectmultiple" %}
+        <div class="border rounded bg-white p-2 recipients-box">
+          {% for choice in field %}
+            <div class="form-check">
+              {{ choice.tag }}
+              <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+          {% empty %}
+            <div class="text-muted small">Пока нечего выбрать.</div>
+          {% endfor %}
+        </div>
+      {% else %}
+        {{ field }}
+      {% endif %}
+    {% endif %}
+    {% if field.help_text %}
+      <div class="form-text">{{ field.help_text|safe }}</div>
+    {% endif %}
+    {% for error in field.errors %}
+      <div class="text-danger small mt-1">{{ error }}</div>
+    {% endfor %}
+  </div>
+{% endfor %}

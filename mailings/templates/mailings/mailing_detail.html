@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Рассылка №{{ mailing.pk }}{% endblock %}
+
+{% block content %}
+  <a href="{% url 'mailings:mailing_list' %}" class="btn btn-link ps-0 mb-2">&laquo; Все рассылки</a>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="d-flex flex-wrap justify-content-between gap-2">
+        <h1 class="h3 mb-2">Рассылка №{{ mailing.pk }}</h1>
+        <div>{% include "mailings/includes/status_badge.html" %}</div>
+      </div>
+      <dl class="row mb-3">
+        <dt class="col-sm-3">Сообщение</dt>
+        <dd class="col-sm-9"><a href="{% url 'mailings:message_detail' pk=mailing.message.pk %}">{{ mailing.message.subject }}</a></dd>
+        <dt class="col-sm-3">Начало отправки</dt>
+        <dd class="col-sm-9">{{ mailing.start_time|date:"d.m.Y H:i" }}</dd>
+        <dt class="col-sm-3">Окончание отправки</dt>
+        <dd class="col-sm-9">{{ mailing.end_time|date:"d.m.Y H:i" }}</dd>
+        <dt class="col-sm-3">Владелец</dt>
+        <dd class="col-sm-9">{{ mailing.owner.email }}</dd>
+        <dt class="col-sm-3">Получатели</dt>
+        <dd class="col-sm-9">
+          {% for recipient in mailing.recipients.all %}{{ recipient.full_name }} &lt;{{ recipient.email }}&gt;{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}
+        </dd>
+      </dl>
+
+      <div class="d-flex flex-wrap gap-2">
+        {% if mailing.owner_id == user.pk %}
+          <form method="post" action="{% url 'mailings:mailing_send' pk=mailing.pk %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Отправить сейчас</button>
+          </form>
+          <a href="{% url 'mailings:mailing_update' pk=mailing.pk %}" class="btn btn-outline-primary">Редактировать</a>
+          <a href="{% url 'mailings:mailing_delete' pk=mailing.pk %}" class="btn btn-outline-danger">Удалить</a>
+        {% endif %}
+        {% if perms.mailings.can_disable_mailing %}
+          <form method="post" action="{% url 'mailings:mailing_toggle' pk=mailing.pk %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn {% if mailing.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
+              {% if mailing.is_active %}Отключить рассылку{% else %}Включить рассылку{% endif %}
+            </button>
+          </form>
+        {% endif %}
+      </div>
+      {% if mailing.owner_id == user.pk and not can_send %}
+        <div class="form-text mt-2">
+          Отправка возможна только в период с {{ mailing.start_time|date:"d.m.Y H:i" }} по {{ mailing.end_time|date:"d.m.Y H:i" }}{% if not mailing.is_active %} и только для включённой рассылки{% endif %}.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <h2 class="h5">Попытки отправки</h2>
+  {% if attempts %}
+    <div class="table-responsive bg-white border rounded">
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Время</th><th>Получатель</th><th>Статус</th><th>Ответ сервера</th></tr></thead>
+        <tbody>
+          {% for attempt in attempts %}
+            <tr>
+              <td class="small">{{ attempt.attempt_time|date:"d.m.Y H:i:s" }}</td>
+              <td class="small">{{ attempt.recipient.email|default:"—" }}</td>
+              <td>{% if attempt.status == "Успешно" %}<span class="badge text-bg-success">Успешно</span>{% else %}<span class="badge text-bg-danger">Не успешно</span>{% endif %}</td>
+              <td class="small text-muted">{{ attempt.server_response }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">Рассылку ещё не отправляли.</p>
+  {% endif %}
+{% endblock %}
